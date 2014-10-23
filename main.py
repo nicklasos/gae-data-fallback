@@ -1,16 +1,13 @@
-from flask import Flask, request
+import webapp2
+import logging
+import time
+import json
+from restore import ShowExportHandler, ExportHandler
 
 try:
     from google.appengine.ext import ndb
 except ImportError:
     pass
-
-import json
-import logging
-import time
-
-
-app = Flask(__name__)
 
 DEFAULT_EVENTS_NAME = 'default_events'
 
@@ -31,63 +28,30 @@ class Event(ndb.Model):
         return 'Events'
 
 
-@app.route('/api/user/<user_id>', methods=['GET', 'POST'])
-def data(user_id):
-    """Store POST body to json field"""
-
-    # region Save each event separated
-    """
-    try:
-        json_content = request.json
-        for e in json_content['events']:
-            event = Event(parent=events_key())
-            event.userid = user_id
-            event.json = json.dumps(e)
-            event.ip = request.remote_addr
-            event.put()
-    except (BadRequest, KeyError):
-        return 'error'
-    """
-    # endregion
-
-    if request.method == 'GET':
+class SaveEventsHandler(webapp2.RequestHandler):
+    def get(self, user_id):
         logging.error('GET request')
+        self.post(user_id)
 
-    try:
-        event = Event(parent=events_key())
-        event.eventId = "%s-%s" % (user_id, time.time())
-        event.userid = user_id
-        event.json = request.data
-        event.ip = request.remote_addr
-        event.put()
-    except Exception as e:
-        logging.error('Data: %s' % request.data)
-        # TODO: remove on prod
-        # return make_response('error: %s' % e, 500)
+    def post(self, user_id):
+        self.response.headers['Content-Type'] = 'text/plain'
+        try:
+            event = Event(parent=events_key())
+            event.eventId = "%s-%s" % (user_id, time.time())
+            event.userid = user_id
+            event.json = self.request.body
+            event.ip = self.request.remote_addr
+            event.put()
+        except:
+            logging.error('Data: %s' % self.request.body)
 
-    return 'success'
-
-
-@app.route('/get/<user_id>')
-def getuser(user_id):
-    rows = request.args.get('rows', 20)
-    # .order(-Event.date)
-    user_events = Event.query(Event.userid == user_id).fetch(int(rows))
-    return print_events(user_events)
+        self.response.write('success')
 
 
-@app.route('/get')
-def getall():
-    """Last 20 rows by default, use ?rows=15 to change it"""
-    rows = request.args.get('rows', 20)
-    # .order(-Event.date)
-    events = Event.query().fetch(int(rows))
-    return print_events(events)
-
-
-@app.route('/count')
-def count_events():
-    return 'Events count: %s' % Event.query().count()
+class LastEventsHandler(webapp2.RequestHandler):
+    def get(self):
+        events = Event.query().order(-Event.date).fetch(20)
+        self.response.write(print_events(events))
 
 
 def print_events(events):
@@ -99,11 +63,25 @@ def print_events(events):
     return json.dumps(result)
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return 'Sorry, Nothing at this URL.', 404
+app = webapp2.WSGIApplication([(r'/api/user/(\w+)', SaveEventsHandler),
+                               (r'/get', LastEventsHandler),
+                               (r'/export', ShowExportHandler),
+                               (r'/export/(\w+)', ExportHandler)], debug=True)
 
 
-@app.errorhandler(500)
-def page_not_found(e):
-    return 'Sorry, unexpected error: {}'.format(e), 500
+def handle_404(request, response, exception):
+    logging.exception(exception)
+    response.write('Oops! I could swear this page was here!')
+    response.set_status(404)
+
+
+def handle_500(request, response, exception):
+    logging.exception(exception)
+    response.write('success')
+    response.set_status(200)
+
+
+app.error_handlers[404] = handle_404
+app.error_handlers[500] = handle_500
+
+
