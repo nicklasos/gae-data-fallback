@@ -3,7 +3,7 @@
 
 #deploy
 ```
-appcfg.py -A plarium-ed-1 --oauth2 update .
+appcfg.py -A <YOUR_APP_ID> --oauth2 update .
 ```
 
 #install
@@ -14,5 +14,5 @@ pip install GoogleAppEngineCloudStorageClient -t lib
 
 #download backup
 ```
-gsutil cp -R gs://datastore_backup-1 data
+gsutil cp -R gs://<YOUR_BUCKET_NAME> data
 ```

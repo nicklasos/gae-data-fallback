@@ -1,3 +1,3 @@
-RESTORE_URL = 'http://reports/restore.php'
-BACKUP_DIR = './data/1/'
-BUCKET_NAME = '/datastore_backup-1'
+RESTORE_URL = 'http://localhost/restore.php'
+BACKUP_DIR = './data/'
+BUCKET_NAME = '/<YOUR_BUCKET_NAME>'
