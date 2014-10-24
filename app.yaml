@@ -1,4 +1,4 @@
-application: <YOUR_APP_ID>
+application: plarium-ed-1
 version: 1
 runtime: python27
 api_version: 1
@@ -8,7 +8,9 @@ builtins:
 - remote_api: on
 
 handlers:
-
 - url: .*
   script: main.app
 
+libraries:
+- name: jinja2
+  version: latest
