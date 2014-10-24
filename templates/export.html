@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Exports</h1>
+<h3>{{ files.keys()|length }} export(s) found in {{ path }}</h3>
+<ul>
+    {% for ename in files.keys() %}
+    <li>
+        <form action="/export/{{ename}}" method="POST">
+            {{ ename }} ({{ files[ename]|length }}) <input type="submit" value="export" />
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+</body>
+</html>
