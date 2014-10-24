@@ -1,10 +1,5 @@
 from flask import Flask, request
-
-try:
-    from google.appengine.ext import ndb
-except ImportError:
-    pass
-
+from google.appengine.ext import ndb
 import json
 import logging
 import time
@@ -71,7 +66,6 @@ def data(user_id):
 @app.route('/get/<user_id>')
 def getuser(user_id):
     rows = request.args.get('rows', 20)
-    # .order(-Event.date)
     user_events = Event.query(Event.userid == user_id).fetch(int(rows))
     return print_events(user_events)
 

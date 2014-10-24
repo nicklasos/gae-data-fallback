@@ -3,11 +3,8 @@ import logging
 import time
 import json
 from restore import ShowExportHandler, ExportHandler
+from google.appengine.ext import ndb
 
-try:
-    from google.appengine.ext import ndb
-except ImportError:
-    pass
 
 DEFAULT_EVENTS_NAME = 'default_events'
 
@@ -17,15 +14,21 @@ def events_key(events_name=DEFAULT_EVENTS_NAME):
 
 
 class Event(ndb.Model):
+    kind_name = 'Events'
+
     eventId = ndb.StringProperty(indexed=False)
-    userid = ndb.StringProperty(indexed=False)
+    userId = ndb.StringProperty(indexed=False)
     json = ndb.TextProperty(indexed=False)
     ip = ndb.StringProperty(indexed=False)
     date = ndb.DateTimeProperty(auto_now_add=True)
 
     @classmethod
     def _get_kind(cls):
-        return 'Events'
+        return cls.kind_name
+
+    @staticmethod
+    def set_kind_name(name):
+        Event.kind_name = name
 
 
 class SaveEventsHandler(webapp2.RequestHandler):
@@ -36,11 +39,12 @@ class SaveEventsHandler(webapp2.RequestHandler):
     def post(self, user_id):
         self.response.headers['Content-Type'] = 'text/plain'
         try:
-            event = Event(parent=events_key())
-            event.eventId = "%s-%s" % (user_id, time.time())
-            event.userid = user_id
-            event.json = self.request.body
-            event.ip = self.request.remote_addr
+            Event.set_kind_name('Events-3')
+            event = Event(parent=events_key(),
+                          eventId="%s-%s" % (user_id, time.time()),
+                          userId=user_id,
+                          json=self.request.body,
+                          ip=self.request.remote_addr)
             event.put()
         except:
             logging.error('Data: %s' % self.request.body)
@@ -56,7 +60,7 @@ class LastEventsHandler(webapp2.RequestHandler):
 
 def print_events(events):
     result = []
-    [result.append({'userId': event.userid,
+    [result.append({'userId': event.userId,
                     'date': str(event.date),
                     'userData': json.loads(event.json)})
      for event in events]

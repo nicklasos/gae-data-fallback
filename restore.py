@@ -83,7 +83,7 @@ class ExportHandler(Export):
             for record in reader:
                 entity = datastore.Entity.FromPb(entity_pb.EntityProto(contents=record))
 
-                result = '{"userId":"%s","date":"%s","ip": "%s","json":%s}\n' % (entity['userid'],
+                result = '{"userId":"%s","date":"%s","ip": "%s","json":%s}\n' % (entity['userId'],
                                                                                  entity['date'],
                                                                                  entity['ip'],
                                                                                  entity['json'])
