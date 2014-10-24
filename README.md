@@ -1,8 +1,5 @@
-##СДЕЛАЙ СВОЙ БЭКАП ДОРОГО И ЧЕРЕЗ ЖОПУ!
+##СДЕЛАЙ СВОЙ БЭКАП ДОРОГО
 ### Python Skeleton for Google App Engine and Cloud Datastore
-
-#todo
-Сделать бэкап через google cloud store, а не через жопу
 
 #deploy
 ```
