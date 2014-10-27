@@ -2,14 +2,16 @@ import webapp2
 
 import logging
 
-from controllers.restore import ShowExportHandler, ExportHandler, BucketHandler
-from controllers.event import SaveEventsHandler, LastEventsHandler
+from controllers.restore import ExportHandler, ExportHttpWorker, ExportWorker, BucketHandler
+from controllers.event import SaveEventsHandler, LastEventsHandler, UserEventsHandler
 
 
 app = webapp2.WSGIApplication([(r'/api/user/(\w+)', SaveEventsHandler),
                                (r'/get', LastEventsHandler),
-                               (r'/export', ShowExportHandler),
-                               (r'/export/(\w+)', ExportHandler),
+                               (r'/get/(\w+)', UserEventsHandler),
+                               (r'/export/worker/http', ExportHttpWorker),
+                               (r'/export/worker', ExportWorker),
+                               (r'/export', ExportHandler),
                                (r'/buckets', BucketHandler)], debug=True)
 
 

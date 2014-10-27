@@ -2,6 +2,7 @@ import webapp2
 import time
 import json
 import logging
+import config
 
 try:
     from google.appengine.ext import ndb
@@ -15,9 +16,11 @@ def events_key(events_name=DEFAULT_EVENTS_NAME):
     return ndb.Key('Events', events_name)
 
 
-class Event(ndb.Model):
-    kind_name = 'Events'
+def get_kind_name():
+    return config.EVENTS_KIND_NAME
 
+
+class Event(ndb.Model):
     eventId = ndb.StringProperty(indexed=False)
     userid = ndb.StringProperty(indexed=False)
     json = ndb.TextProperty(indexed=False)
@@ -26,22 +29,27 @@ class Event(ndb.Model):
 
     @classmethod
     def _get_kind(cls):
-        return cls.kind_name
-
-    @staticmethod
-    def set_kind_name(name):
-        Event.kind_name = name
+        return get_kind_name()
 
 
 class SaveEventsHandler(webapp2.RequestHandler):
+    """ Save events to datastore """
+
     def get(self, user_id):
+        """
+        Mark get requests as error and run post method
+        :param user_id: hash
+        """
         logging.error('GET request')
         self.post(user_id)
 
     def post(self, user_id):
+        """
+        Save post body to json field in Event kind
+        :param user_id: hash
+        """
         self.response.headers['Content-Type'] = 'text/plain'
         try:
-            Event.set_kind_name('Events-1')
             event = Event(parent=events_key(),
                           eventId="%s-%s" % (user_id, time.time()),
                           userid=user_id,
@@ -60,9 +68,15 @@ class LastEventsHandler(webapp2.RequestHandler):
         self.response.write(print_events(events))
 
 
+class UserEventsHandler(webapp2.RequestHandler):
+    def get(self, user_id):
+        user_events = Event.query(Event.userid == user_id).fetch(20)
+        return print_events(user_events)
+
+
 def print_events(events):
     result = []
-    [result.append({'userId': event.userId,
+    [result.append({'userId': event.userid,
                     'date': str(event.date),
                     'userData': json.loads(event.json)})
      for event in events]

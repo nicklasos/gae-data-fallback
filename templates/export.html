@@ -6,7 +6,11 @@
 <ul>
     {% for ename in files.keys() %}
     <li>
-        <form action="/export/{{ename}}" method="POST">
+        <!-- this one is for queue -->
+        <form action="/export?file={{ ename }}" method="POST">
+
+        <!-- and this one is direct =) -->
+        <!--<form action="/export/worker?file={{ ename }}" method="POST">-->
             {{ ename }} ({{ files[ename]|length }}) <input type="submit" value="export" />
         </form>
     </li>
