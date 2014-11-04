@@ -1,8 +1,9 @@
+# coding=utf-8
 import webapp2
 
 import logging
 
-from controllers.restore import ExportHandler, ExportHttpWorker, ExportWorker, BucketHandler
+from controllers.restore import ExportHandler, ExportHttpWorker, ExportWorker
 from controllers.event import SaveEventsHandler, LastEventsHandler, UserEventsHandler
 
 
@@ -11,8 +12,7 @@ app = webapp2.WSGIApplication([(r'/api/user/(\w+)', SaveEventsHandler),
                                (r'/get/(\w+)', UserEventsHandler),
                                (r'/export/worker/http', ExportHttpWorker),
                                (r'/export/worker', ExportWorker),
-                               (r'/export', ExportHandler),
-                               (r'/buckets', BucketHandler)], debug=True)
+                               (r'/export', ExportHandler)], debug=True)
 
 
 def handle_404(request, response, exception):

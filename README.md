@@ -1,12 +1,9 @@
 ##СДЕЛАЙ СВОЙ БЭКАП ДОРОГО
 ### Python Skeleton for Google App Engine and Cloud Datastore
 
-#todo
-Сделать бэкап через google cloud store, а не через жопу
-
 #deploy
 ```
-appcfg.py -A <APP_ID> --oauth2 update .
+appcfg.py -A plarium-ed-1 --oauth2 update .
 ```
 
 #install
@@ -17,5 +14,9 @@ pip install GoogleAppEngineCloudStorageClient -t lib
 
 #download backup
 ```
-gsutil cp -R gs://<BUCKET_NAME> data
+gsutil cp -R gs://datastore_backup-1 data
 ```
+
+#links
+* AppEngine, create backups here: https://appengine.google.com
+* Developers console: https://console.developers.google.com
