@@ -14,7 +14,7 @@ pip install GoogleAppEngineCloudStorageClient -t lib
 
 #download backup
 ```
-gsutil cp -R gs://datastore_backup-1 data
+gsutil cp -R gs://<YOUR_BACKET_NAME> data
 ```
 
 #links
