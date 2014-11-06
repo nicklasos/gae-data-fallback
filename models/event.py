@@ -27,3 +27,6 @@ class Event(ndb.Model):
     @classmethod
     def _get_kind(cls):
         return get_kind_name()
+
+    def __getitem__(self, index):
+        return getattr(self, index)

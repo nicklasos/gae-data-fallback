@@ -3,7 +3,7 @@
 
 #deploy
 ```
-appcfg.py -A plarium-ed-1 --oauth2 update .
+appcfg.py -A <YOUR_APP_ID> --oauth2 update .
 ```
 
 #install

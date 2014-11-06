@@ -5,8 +5,19 @@ import re
 
 try:
     import cloudstorage as gcs
-except:
+except ImportError:
     pass
+
+
+def get_file_handler(file_name):
+    """
+    :param file_name: filename to create, example: test.txt or folder/test.txt
+    :return: A reading or writing buffer that supports File-like interface.
+    """
+    write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+    return gcs.open(config.BUCKET_NAME + '/' + file_name, 'w',
+                    content_type='text/plain',
+                    retry_params=write_retry_params)
 
 
 def list_bucket():
@@ -38,3 +49,19 @@ def group_files():
             files[split[0]].append(split)
 
     return files
+
+
+def list_content():
+    stats = list_files()
+
+    r = ''
+    for stat in stats:
+        r += stat.filename + ': '
+        r += gcs.open(stat.filename).read() + '\n'
+
+    return r
+
+
+def list_files():
+    stats = gcs.listbucket(config.BUCKET_NAME)
+    return stats

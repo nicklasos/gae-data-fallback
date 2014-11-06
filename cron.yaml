@@ -1,0 +1,5 @@
+cron:
+- description: grab data from datastore and put it to file
+  url: /cron/grabber
+  schedule: every 15 mins
+  target: backend-module

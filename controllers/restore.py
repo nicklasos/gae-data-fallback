@@ -2,8 +2,6 @@
 import webapp2
 import sys
 import config
-import operator
-import logging
 import services.files
 import services.event
 import services.restore

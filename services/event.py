@@ -1,5 +1,5 @@
 # coding=utf-8
-import models.event
+import models.event as e
 import time
 import logging
 import json
@@ -7,11 +7,11 @@ import json
 
 def save(user_id, data, ip='undefined'):
     try:
-        event = models.event.Event(parent=models.event.events_key(),
-                                   eventId="%s-%s" % (user_id, time.time()),
-                                   userid=user_id,
-                                   json=data,
-                                   ip=ip)
+        event = e.Event(parent=e.events_key(),
+                        eventId="%s-%s" % (user_id, time.time()),
+                        userid=user_id,
+                        json=data,
+                        ip=ip)
         event.put()
         return True
 
@@ -22,12 +22,12 @@ def save(user_id, data, ip='undefined'):
 
 
 def get_last_user_events(user_id, rows=20):
-    user_events = models.event.Event.query(models.event.Event.userid == user_id).fetch(rows)
+    user_events = e.Event.query(e.Event.userid == user_id).fetch(rows)
     return printable_events(user_events)
 
 
 def get_last_events(rows=20):
-    events = models.event.Event.query().order(-models.event.Event.date).fetch(rows)
+    events = e.Event.query().order(e.Event.date).fetch(rows)
     return printable_events(events)
 
 
@@ -45,3 +45,7 @@ def entity_to_string(entity):
                                                                    entity['date'],
                                                                    entity['ip'],
                                                                    entity['json'])
+
+
+def count_events():
+    return e.Event.query().count()

@@ -1,13 +1,19 @@
 # coding=utf-8
 import webapp2
-
 import logging
 
 from controllers.restore import ExportHandler, ExportHttpWorker, ExportWorker
-from controllers.event import SaveEventsHandler, LastEventsHandler, UserEventsHandler
+from controllers.event import SaveEventsHandler, LastEventsHandler, UserEventsHandler, EventsCountHandler
 
 
-app = webapp2.WSGIApplication([(r'/api/user/(\w+)', SaveEventsHandler),
+class BlankPageHandler(webapp2.RequestHandler):
+    def get(self):
+        self.response.write('')
+
+
+app = webapp2.WSGIApplication([(r'/', BlankPageHandler),
+                               (r'/api/user/(\w+)', SaveEventsHandler),
+                               (r'/count', EventsCountHandler),
                                (r'/get', LastEventsHandler),
                                (r'/get/(\w+)', UserEventsHandler),
                                (r'/export/worker/http', ExportHttpWorker),

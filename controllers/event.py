@@ -26,8 +26,15 @@ class SaveEventsHandler(webapp2.RequestHandler):
         :param user_id: hash
         """
         self.response.headers['Content-Type'] = 'text/plain'
-        services.event.save(user_id, self.request.body, self.request.remote_addr)
+        services.event.save(user_id,
+                            self.request.body,
+                            self.request.remote_addr)
         self.response.write('success')
+
+
+class EventsCountHandler(webapp2.RequestHandler):
+    def get(self):
+        self.response.write(services.event.count_events())
 
 
 class LastEventsHandler(webapp2.RequestHandler):
